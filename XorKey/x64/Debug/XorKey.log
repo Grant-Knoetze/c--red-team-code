@@ -1,0 +1,2 @@
+﻿  XorKey.cpp
+C:\Users\Grant Knoetze Local\Documents\Visual_studio_2019_projects\Advanced_pen_testing_C++\XorKey\XorKey.cpp(5,10): error C2466: cannot allocate an array of constant size 0
