@@ -1,6 +1,4 @@
-// Module04Exercise.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
+//Encrypt a string using XOR (represented by a caret ^ in C++)
 #include <iostream>
 
 
@@ -13,7 +11,7 @@ void EncryptString(char* str, int length, char* buf, char key)
 }
 int main()
 {
-	char* str = (char*) "http://192.168.1.3:8888/beacon"; 
+	char* str = (char*) "http://127.0.0.1:8888/beacon"; // Example string to encrypt
 	int length = strlen(str);
 	char* buf = (char*)malloc(length);
 
