@@ -13,8 +13,7 @@ int main()
 {
 	while (true)
 	{
-		std::string msg = "{\"paw\":\"malwr\", \"pid\":\"1200\",\"server\":\"" + std::string("linkedinsolutions.com") + "\",\"platform\":\"windows\",\"host\":\"http-malware\", \
-		\"username\":\"grantk\",\"architecture\":\"amd64\",\"privilege\":\"User\", \"executors\":[\"cmd\", \"psh\"]}";
+		std::string msg = ""; // JSON data for transmission encoded in base64 goes here.
 
 		char* encodedmsg = b64encode((char*)msg.c_str(), msg.length());
 		printf("Our Encoded Msg: %s\n", encodedmsg);
