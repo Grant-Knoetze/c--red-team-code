@@ -1,26 +1,109 @@
-#include "http.h"
+// Include a header file with the libraries and modules required for the program to run.
 
-LPCSTR UserAgent = ""; // Insert user agent here
+#include "internet.h"
 
- HINTERNET SendRequest(LPCSTR Domain, int Port, LPCSTR URI, LPCSTR Verb, const char* Params)
-{ 
-     // This code is using the Windows InternetOpen and InternetConnect to establish an HTTP connection.
+#pragma comment (lib, "Wininet.lib")
 
-    HINTERNET InternetHandle = InternetOpenA(UserAgent, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-    HINTERNET ConnectHandle = InternetConnectA(InternetHandle, Domain, Port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, NULL);
-    if (ConnectHandle == NULL)
-    {
-        return NULL;
-    }
-    HINTERNET hRequest = HttpOpenRequestA(ConnectHandle, Verb, URI, "HTTP/1.1", NULL, NULL, INTERNET_FLAG_KEEP_CONNECTION, NULL);
-    if (HttpSendRequest(hRequest, NULL, 0, (LPVOID)Params, strlen(Params)))
-    {
-        return hRequest;
-    }
-    else
-    {
-        return NULL;
-    }
-}   
+//Important Strings
+
+LPCSTR UserAgent = "Mozilla / 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 96.0.4664.110 Safari / 537.36"; // User Agent for the HTTP request
+LPCSTR acceptTypes[] = { "application/x-www-form-urlencoded", NULL };
+
+// We use Windows HTTP API's to send and receive data over HTTP. 
+
+HINTERNET SendRequest(LPCSTR Domain, int Port, LPCSTR URI, LPCSTR Verb, const char* Params)
+{
+	HINTERNET hSession, hConnect, hFile;
+	if ((hSession = InternetOpen(UserAgent, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0)) == NULL)
+		return NULL;
+	if ((hConnect = InternetConnect(hSession, Domain, Port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0)) == NULL)
+		return NULL;
+
+	if ((hFile = HttpOpenRequest(hConnect, Verb, URI, NULL, NULL, acceptTypes, INTERNET_FLAG_RELOAD, 0)) == NULL)
+		return NULL;
+
+	unsigned long dataLen = strlen(Params);
+	if (HttpSendRequest(hFile, NULL, 0, (char*)Params, dataLen) == TRUE)
+		return hFile;
+	else
+		return NULL;
+}
+
+int GetStatusCode(HINTERNET hFile)
+{
+	int statusCode = 0;
+	DWORD nStatusCodeLength = sizeof(statusCode);
+
+	if (!HttpQueryInfo(hFile,
+		HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
+		&statusCode,
+		&nStatusCodeLength,
+		NULL))
+		return 0;
+	return statusCode;
+}
+
+char* GetResponse(HINTERNET hFile, DWORD* Length)
+{
+	DWORD ContentLength = 0;
+	DWORD varLength = sizeof(DWORD);
+	DWORD dwIndex;
+	dwIndex = 0;
+	*Length = 0;
+	// get Content-Length value
+	if (!HttpQueryInfo(
+		hFile,
+		HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,
+		&ContentLength,
+		&varLength,
+		&dwIndex))
+		return NULL;
+
+	*Length = ContentLength;
+	//Now time to grab the content
+	char* Buffer = (char*)malloc(ContentLength + 1);
+	memset(Buffer, 0, ContentLength + 1);
+	if (InternetReadFile(hFile, Buffer, ContentLength, &dwIndex))
+		return Buffer;
+	else
+		return NULL;
+}
+
+//FileToDownload: Only Add FileToDownload when downloading from Caldera to add the extra header "file:<filename>"
+char* DownloadFile(LPCSTR URL, DWORD* FileLength, LPCSTR FileToDownload = NULL)
+{
+	HINTERNET hSession, hURL;
+	BOOL bResult;
+	DWORD dwBytesRead = 1;
 
 
+	hSession = InternetOpen(
+		UserAgent, // agent
+		INTERNET_OPEN_TYPE_PRECONFIG,
+		NULL, NULL, 0);
+
+	char* FileHeader = NULL;
+	int FileHeaderLength = 0;
+
+	if (FileToDownload)
+	{
+		FileHeaderLength = snprintf(NULL, 0, "file:%s", FileToDownload);
+		FileHeader = (char*)malloc(FileHeaderLength + 1);
+		memset(FileHeader, 0, FileHeaderLength + 1);
+		snprintf(FileHeader, FileHeaderLength + 1, "file:%s", FileToDownload);
+	}
+
+	hURL = InternetOpenUrl(
+		hSession,
+		URL,
+		FileHeader, FileHeaderLength,	// File Header
+		0, 0);							// defaults
+
+
+	DWORD Length = 0;
+	char* FileData = GetResponse(hURL, &Length);
+	*FileLength = Length;
+	InternetCloseHandle(hURL);
+	InternetCloseHandle(hSession);
+	return FileData;
+}
