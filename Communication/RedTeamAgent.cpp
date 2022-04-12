@@ -1,6 +1,5 @@
 // RedTeamAgent.cpp
-// This agent opens up an HTTP session and transmits data to a phishing domain that I have 
-// configured to point to Caldera. The data being sent is json data encoded in base64.
+// This agent opens up an HTTP session and transmits data to a C2 (Caldera). 
 // We can use regular expressions to remove bad characters from the transmitted data.
 
 #include "main.h"
