@@ -9,6 +9,7 @@ C++ code useful for red team engagements.
 * The code is intended to provide a framework for the development of fully customizable code,
   that can be easily modified to suit the needs of the professional.
 * The communication agent is designed to communicate over port 80 or 443 using Windows APIs, and their associated functions.
+* This communication agent is using Caldera https://caldera.mitre.org/ as a command and control server, but it is designed to be customizable for use with a custom C&C.
 * For more information regarding Windows internet APIs and their implementation using C++,
   please visit the Microsoft Development Network (MSDN) site and refer to the documentation which
   can be found at https://docs.microsoft.com/en-us/welcome-to-docs.
