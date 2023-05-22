@@ -1,15 +1,11 @@
-// Include a header file with the libraries and modules required for the program to run.
-
 #include "internet.h"
 
 #pragma comment (lib, "Wininet.lib")
 
 //Important Strings
-
-LPCSTR UserAgent = "Mozilla / 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 96.0.4664.110 Safari / 537.36"; // User Agent for the HTTP request
+LPCSTR UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; InfoPath.1)";
 LPCSTR acceptTypes[] = { "application/x-www-form-urlencoded", NULL };
 
-// We use Windows HTTP API's to send and receive data over HTTP. 
 
 HINTERNET SendRequest(LPCSTR Domain, int Port, LPCSTR URI, LPCSTR Verb, const char* Params)
 {
@@ -79,7 +75,7 @@ char* DownloadFile(LPCSTR URL, DWORD* FileLength, LPCSTR FileToDownload = NULL)
 
 	hSession = InternetOpen(
 		UserAgent, // agent
-		INTERNET_OPEN_TYPE_PRECONFIG,
+		INTERNET_OPEN_TYPE_PRECONFIG, 
 		NULL, NULL, 0);
 
 	char* FileHeader = NULL;
@@ -92,14 +88,14 @@ char* DownloadFile(LPCSTR URL, DWORD* FileLength, LPCSTR FileToDownload = NULL)
 		memset(FileHeader, 0, FileHeaderLength + 1);
 		snprintf(FileHeader, FileHeaderLength + 1, "file:%s", FileToDownload);
 	}
-
+	
 	hURL = InternetOpenUrl(
-		hSession,
+		hSession,   
 		URL,
 		FileHeader, FileHeaderLength,	// File Header
 		0, 0);							// defaults
 
-
+	
 	DWORD Length = 0;
 	char* FileData = GetResponse(hURL, &Length);
 	*FileLength = Length;
