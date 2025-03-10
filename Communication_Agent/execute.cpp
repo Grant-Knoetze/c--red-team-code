@@ -1,4 +1,3 @@
-// Execute instructions, create pipelines and evade.
 #include "execute.h"
 
 
@@ -35,28 +34,6 @@ char* CopyStr(char* src, int length)
 	return dest;
 }
 
-char* ExtractString(string src, char* start, char* end, int& pos)
-{
-	char* result = NULL;
-	int size = 0;
-	string source = src;
-	pos = source.find(start, pos);
-	if (pos == -1)
-		return result;
-	pos = pos + strlen(start);
-	int endpos = source.find(end, pos);
-
-	if (endpos == -1)
-		size = source.length() - pos;
-	else
-		size = endpos - pos;
-
-	result = (char*)malloc(size + 1);
-	memset(result, 0, size + 1);
-	source.copy(result, size, pos);
-	pos = endpos;
-	return result;
-}
 
 //30 secs
 #define MAX_WAITTIME 100 * 30 

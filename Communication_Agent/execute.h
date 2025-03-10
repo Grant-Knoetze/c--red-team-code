@@ -4,9 +4,6 @@
 using namespace std;
 
 
-//String Manipulation
-char* ExtractString(string src, char* start, char* end, int& pos);
-wstring ConvertAnsiToWide(const string& str);
-
 //Executing Applications
+wstring ConvertAnsiToWide(const string& str);
 char* ExecuteApplication(string cmd, size_t& OutputLength);
