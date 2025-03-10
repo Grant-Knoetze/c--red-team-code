@@ -1,5 +1,8 @@
-// RedTeamAgent.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+/*This is a communication agent/trojan that is designed to communicate over HTTP or HTTPS to blend in with web traffic.
+Depending on your chosen method of initial access into the organization and command and control server, this trojan can
+be dropped once initial access is gained. The agent is custom and should bypass AV detection. This code is designed to 
+be customizable, and you can include useful modules such as a keylogger module.
+*/
 
 #include "main.h"
 
