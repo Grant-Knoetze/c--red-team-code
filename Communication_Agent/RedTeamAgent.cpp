@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 <<<<<<< HEAD:Communication_Agent/RedTeamAgent.cpp
+=======
+>>>>>>> 2f76a8ec41560abbb1a893c5a12a11ae030dcb7b
 // RedTeamAgent.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
@@ -176,6 +179,7 @@ int main()
     
 
 }
+<<<<<<< HEAD
 =======
 /*This is a communication agent/trojan that is designed to communicate over HTTP or HTTPS to blend in with web traffic.
 Depending on your chosen method of initial access into the organization and command and control server, this trojan can
@@ -358,3 +362,5 @@ int main()
 
 }
 >>>>>>> 595fc30 (Update RedTeamAgent.cpp):Communication/RedTeamAgent.cpp
+=======
+>>>>>>> 2f76a8ec41560abbb1a893c5a12a11ae030dcb7b
