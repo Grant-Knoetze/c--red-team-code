@@ -1,3 +1,6 @@
+/*This file includes the functionality for internet communication using WinINet API functions.
+ We call it in the main redTeamAgent.cpp file.*/
+
 #include "internet.h"
 
 #pragma comment (lib, "Wininet.lib")
