@@ -114,15 +114,23 @@ void StartLogging()
 extern "C" __declspec(dllexport) char* GetLogs()
 {
 	FILE* f = fopen("log.txt", "r");
-	if (f == NULL)
-		return NULL;
+	if (f == nullptr)
+		return nullptr;
+
 	fseek(f, 0, SEEK_END);
 	long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	char* Logs = (char*)malloc(fsize + 1);
 	fread(Logs, 1, fsize, f);
 	fclose(f);
-	//Clear the log file
-	DeleteFile("log,txt");
-    return Logs;
+
+	// Convert narrow string to wide string
+	std::wstring wideFilePath = L"log.txt";
+
+	// Clear the log file using DeleteFileW
+	if (!DeleteFile(wideFilePath.c_str())) {
+		std::cerr << "Failed to delete log file!\n";
+	}
+
+	return Logs;
 }
