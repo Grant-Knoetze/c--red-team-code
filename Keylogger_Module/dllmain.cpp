@@ -38,14 +38,16 @@ extern "C" __declspec(dllexport) const char* Install()
 
 void Log(char Key)
 {
-	FILE* f = fopen("log.txt", "a");
+	FILE* f;
+	errno_t err = fopen_s(&f, "log.txt", "a");
 	fwrite(&Key, 1, 1, f);
 	fclose(f);
 
 }
 void Log(char* Sentence)
 {
-	FILE* f = fopen("log.txt", "a");
+	FILE* f;
+	errno_t err = fopen_s(&f, "log.txt", "a");
 	fwrite(Sentence, strlen(Sentence), 1, f);
 	fclose(f);
 }
