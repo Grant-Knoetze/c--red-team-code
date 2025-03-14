@@ -1,5 +1,5 @@
-// RedTeamAgent.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+/* This is a fully undetectable custom trojan for red teaming operations, it uses the MSDN WinINet API and 
+ it's functions for communication over HTTP and HTTPS to blend in with web traffic to evade detection.*/
 
 #include "main.h"
 
