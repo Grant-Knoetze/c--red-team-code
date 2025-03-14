@@ -114,11 +114,11 @@ void StartLogging()
 extern "C" __declspec(dllexport) char* GetLogs()
 {
 	FILE* f = nullptr;
-errno_t err = fopen_s(&f, "log.txt", "r");
-if (err != 0 || f == nullptr) {
-    // Handle error
-    std::cerr << "Error opening file: log.txt\n";
-    // Optionally, exit or return an error code
+        errno_t err = fopen_s(&f, "log.txt", "r");
+        if (err != 0 || f == nullptr) {
+           // Handle error
+           std::cerr << "Error opening file: log.txt\n";
+           // Optionally, exit or return an error code
 }
 
 	fseek(f, 0, SEEK_END);
