@@ -20,4 +20,6 @@ int main()
 
 	printf("Encrypted String: %s", buf);
 
+	return 0;
+
 }
